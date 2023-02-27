@@ -1,0 +1,13 @@
+streamlit==1.16.0
+pandas==1.4.3
+numpy==1.24.1
+plotly==5.9.0
+tensorflow==2.11.0
+scikit-learn==1.1.1
+matplotlib==3.5.1
+tweet-preprocessor==0.6.0
+tweepy==4.10.1
+textblob==0.15.3
+wordcloud==1.8.2.2
+nltk==3.7
+googletrans==4.0.0-rc1
