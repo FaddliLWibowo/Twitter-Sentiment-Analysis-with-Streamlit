@@ -30,4 +30,4 @@ streamlit run main.py
 ```
 
 ## Created by:
-1. Faddli Lindra Wibowo
+Faddli Lindra Wibowo
