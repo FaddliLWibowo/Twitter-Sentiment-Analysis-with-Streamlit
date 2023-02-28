@@ -14,7 +14,7 @@ pip install virtualenv
 ```
 2. Buatlah virtual environment terlebih dahulu menggunakan library venv
 ```
-virtualenv env
+python -m venv env
 ```
 3. Aktivasi env
 ```
@@ -30,4 +30,7 @@ streamlit run main.py
 ```
 
 ## Created by:
+Timotius Marselo
+
+## Modified by:
 Faddli Lindra Wibowo
