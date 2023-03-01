@@ -103,13 +103,15 @@ def casefolding(tweet_df):
     tweet_df  = re.sub(r'#([^\s]+)', r'\1', tweet_df )
     #remove symbols
     tweet_df = re.sub(r'[^.,a-zA-Z0-9 \n\.]',' ',tweet_df)
+    tweet_df = re.sub(r'[-+]?[0-9]+', '', tweet_df)  
     tweet_df = tweet_df.replace(',',' ').replace('.',' ')          
     tweet_df = re.sub(r'[^\w\s]', '', tweet_df)    
     #trim             
     tweet_df = tweet_df.strip('\'"')
     return tweet_df
 
-key_norm = pd.read_csv('https://raw.githubusercontent.com/FaddliLWibowo/Twitter-Sentiment-Analysis-with-Streamlit/main/Dataset/kamus_kbba.csv', encoding='ISO-8859-1')
+# Normalisasi data dari slang ke kata dalam bahasa indonesia
+key_norm = pd.read_csv('https://raw.githubusercontent.com/FaddliLWibowo/Twitter-Sentiment-Analysis-with-Streamlit/main/Dataset/kamus-slang-ind.csv', encoding='ISO-8859-1')
 
 def text_normalize(tweet_df):
     tweet_df = ' '.join([key_norm[key_norm['singkat'] == word]['hasil'].values[0]
@@ -119,6 +121,7 @@ def text_normalize(tweet_df):
     tweet_df = str.lower(tweet_df)
     return tweet_df
 
+# membuat fungsi stopword
 stopwords_ind = stopwords.words('indonesian')
 more_stopword = ['terusmajubersamaprabowo', 'mendingprabowo', 'prabowopresiden', 'prabowopersatuanindonesia', 'prabowosubianto']
 stopwords_ind = stopwords_ind + more_stopword
@@ -131,10 +134,10 @@ def remove_stop_word(tweet_df):
             clean_words.append(word)
     return " ".join(clean_words)
 
+# membuat fungsi untuk stemming bahasa indonesia
 factory = StemmerFactory()
 stemmer = factory.create_stemmer()
 
-# membuat fungsi untuk stemming bahasa indonesia
 def stemming(tweet_df):
     tweet_df = stemmer.stem(tweet_df)
     return tweet_df
