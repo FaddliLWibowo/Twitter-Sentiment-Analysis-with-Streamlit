@@ -88,6 +88,8 @@ berikutnya
 berjumlah
 berkali-kali
 berkata
+berkali
+kali
 berkehendak
 berkeinginan
 berkenaan
@@ -539,6 +541,7 @@ sebagian
 sebaik
 sebaik-baiknya
 sebaiknya
+baiknya
 sebaliknya
 sebanyak
 sebegini
@@ -587,6 +590,8 @@ sekitar
 sekitarnya
 sekurang-kurangnya
 sekurangnya
+kurangnya
+sekurang
 sela
 selagi
 selain
@@ -606,6 +611,7 @@ semasa
 semasih
 semata
 semata-mata
+mata
 semaunya
 sementara
 semisal
@@ -619,6 +625,7 @@ sendirian
 sendirinya
 seolah
 seolah-olah
+olah
 seorang
 sepanjang
 sepantasnya
@@ -650,6 +657,8 @@ setiba
 setibanya
 setidak-tidaknya
 setidaknya
+tidaknya
+setidak
 setinggi
 seusai
 sewaktu
@@ -718,6 +727,7 @@ tertentu
 tertuju
 terus
 terutama
+tama
 tetap
 tetapi
 tiap
