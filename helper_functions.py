@@ -87,12 +87,26 @@ def get_latest_tweet_df(search_term, num_tweets):
 
 # membuat fungsi untuk case folding
 def casefolding(tweet_df):
-   
-    tweet_df = tweet_df.lower()                                 # merubah kalimat menjadi huruf kecil
-    tweet_df = re.sub(r'https?://\S+|www\.\S+', '', tweet_df)   # menghapus url dari kalimat
-    tweet_df = re.sub(r'[-+]?[0-9]+', '', tweet_df)              # menghapus angka dari kalimat
-    tweet_df = re.sub(r'[^\w\s]', '', tweet_df)                 # menghapus tanda baca
-    tweet_df = tweet_df.strip()
+    pattern = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
+    pattern1 = re.compile(r'pic.twitter.com/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
+    tweet_df = re.sub(pattern,' ',tweet_df) #remove urls if any
+    tweet_df = re.sub(pattern1,' ',tweet_df)
+    #Convert to lower case
+    tweet_df = tweet_df.lower()                                
+     #Convert www.* or https?://*
+    tweet_df = re.sub('((www\.[^\s]+)|(https?://[^\s]+))','',tweet_df) 
+    #Convert @username to AT_USER
+    tweet_df = re.sub('@+','',tweet_df)
+     #Remove additional white spaces
+    tweet_df = re.sub('[\s]+', ' ', tweet_df)
+    #Replace #word with word
+    tweet_df  = re.sub(r'#([^\s]+)', r'\1', tweet_df )
+    #remove symbols
+    tweet_df = re.sub(r'[^.,a-zA-Z0-9 \n\.]',' ',tweet_df)
+    tweet_df = tweet_df.replace(',',' ').replace('.',' ')          
+    tweet_df = re.sub(r'[^\w\s]', '', tweet_df)    
+    #trim             
+    tweet_df = tweet_df.strip('\'"')
     return tweet_df
 
 key_norm = pd.read_csv('https://raw.githubusercontent.com/FaddliLWibowo/Twitter-Sentiment-Analysis-with-Streamlit/main/Dataset/kamus_kbba.csv', encoding='ISO-8859-1')
@@ -102,14 +116,11 @@ def text_normalize(tweet_df):
     if (key_norm['singkat'] == word).any()
     else word for word in tweet_df.split()
     ])
-
     tweet_df = str.lower(tweet_df)
     return tweet_df
 
 stopwords_ind = stopwords.words('indonesian')
-
-# menambahkan kata dalam stopword
-more_stopword = ['tsel', 'gb', 'rb', 'btw']
+more_stopword = ['terusmajubersamaprabowo', 'mendingprabowo', 'prabowopresiden', 'prabowopersatuanindonesia', 'prabowosubianto']
 stopwords_ind = stopwords_ind + more_stopword
 
 def remove_stop_word(tweet_df):
@@ -136,7 +147,6 @@ def text_preprocessing(tweet_df):
     tweet_df = stemming(tweet_df)
     return tweet_df
 
- 
 def predict_sentiment(tweet_df):
     model = load_model("static/twitter-sentiment-analysis-model-lstm.h5")
     with open("static/tokenizer.pickle", "rb") as handle:
