@@ -81,7 +81,9 @@ if "df" in st.session_state:
             st.plotly_chart(bigram_plot, theme=None, use_container_width=True)
 
         
-        with st.empty():
+        col1, col2 = st.columns([60, 40])
+
+        with col1:
             def sentiment_color(sentiment):
                 if sentiment == "Positif":
                     return "background-color: #1F77B4; color: white"
@@ -92,10 +94,10 @@ if "df" in st.session_state:
                 tweet_df[["Sentiment", "Tweet"]].style.applymap(
                     sentiment_color, subset=["Sentiment"]
                 ),
-                use_container_width=True
+                height=350,
             )
 
-        with st.empty():
+        with col2:
             wordcloud = hf.plot_wordcloud(tweet_df, colormap=wc_color)
             st.pyplot(wordcloud)
 
