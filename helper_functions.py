@@ -158,7 +158,7 @@ def predict_sentiment(tweet_df):
     temp_df["Cleaned Tweet"] = temp_df["Tweet"].apply(text_preprocessing)
     temp_df = temp_df[(temp_df["Cleaned Tweet"].notna()) & (temp_df["Cleaned Tweet"] != "")]
     sequences = pad_sequences(
-        custom_tokenizer.texts_to_sequences(temp_df["Cleaned Tweet"]), maxlen=54
+        custom_tokenizer.texts_to_sequences(temp_df["Cleaned Tweet"]), maxlen=41
     )
     score = model.predict(sequences)
     temp_df["Score"] = score
