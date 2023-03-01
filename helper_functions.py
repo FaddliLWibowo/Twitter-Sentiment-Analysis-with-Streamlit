@@ -174,7 +174,7 @@ def plot_sentiment(tweet_df):
     return fig
 
 
-def plot_wordcloud(tweet_df, colormap="Blues"):
+def plot_wordcloud(tweet_df, colormap="Greens"):
     stopwords = set()
     with open("Dataset/stopwords.txt", "r") as file:
         for word in file:

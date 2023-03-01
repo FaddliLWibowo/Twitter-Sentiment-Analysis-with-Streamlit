@@ -51,7 +51,7 @@ with st.sidebar:
             "Note: it may take a while to load the results, especially with large number of tweets"
         )
 
-    st.markdown("[Github link](https://github.com/tmtsmrsl/TwitterSentimentAnalyzer)")
+    # st.markdown("[Github link](https://github.com/tmtsmrsl/TwitterSentimentAnalyzer)")
     st.markdown("Created by Timotius Marselo")
     st.markdown("Modified by Faddli Lindra Wibowo")
 
