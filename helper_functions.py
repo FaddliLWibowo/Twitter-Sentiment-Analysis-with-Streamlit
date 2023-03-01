@@ -170,7 +170,7 @@ def plot_sentiment(tweet_df):
     return fig
 
 
-def plot_wordcloud(tweet_df, colormap="Greens"):
+def plot_wordcloud(tweet_df, colormap="Blues"):
     stopwords = set()
     with open("Dataset/stopwords.txt", "r") as file:
         for word in file:
@@ -197,7 +197,7 @@ def plot_wordcloud(tweet_df, colormap="Greens"):
     ax = fig.add_subplot(1, 1, 1)
     plt.imshow(wc, interpolation="bilinear")
     plt.axis("off")
-    plt.title("Wordcloud", fontdict={"fontsize": 16}, fontweight="heavy", pad=20, y=1.0)
+    # plt.title("Wordcloud", fontdict={"fontsize": 16}, fontweight="heavy", pad=20, y=1.0)
     return fig
 
 

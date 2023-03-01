@@ -1,11 +1,12 @@
 import streamlit as st
 import pandas as pd
 import helper_functions as hf
+from PIL import Image
 
-
+icon = Image.open("Static/favicon.ico")
 
 st.set_page_config(
-    page_title="Twitter Sentiment Analyzer", page_icon="📊", layout="wide"
+    page_title="Twitter Sentiment Analyzer", page_icon=icon, layout="wide"
 )
 
 
@@ -79,10 +80,8 @@ if "df" in st.session_state:
             bigram_plot.update_layout(height=350)
             st.plotly_chart(bigram_plot, theme=None, use_container_width=True)
 
-        # second row
-        col1, col2 = st.columns([60, 40])
-        with col1:
-
+        
+        with st.empty():
             def sentiment_color(sentiment):
                 if sentiment == "Positif":
                     return "background-color: #1F77B4; color: white"
@@ -93,9 +92,10 @@ if "df" in st.session_state:
                 tweet_df[["Sentiment", "Tweet"]].style.applymap(
                     sentiment_color, subset=["Sentiment"]
                 ),
-                height=350,
+                use_container_width=True
             )
-        with col2:
+
+        with st.empty():
             wordcloud = hf.plot_wordcloud(tweet_df, colormap=wc_color)
             st.pyplot(wordcloud)
 
