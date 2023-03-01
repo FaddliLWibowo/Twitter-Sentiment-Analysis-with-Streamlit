@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import datetime
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pickle
@@ -64,6 +65,8 @@ pio.templates["custom"].layout.colorway = [
 ]
 pio.templates.default = "custom"
 
+current_time = datetime.datetime.now()
+date = current_time.strftime("%Y-%m-%d")
 
 def get_latest_tweet_df(search_term, num_tweets):
     tweet_data = []
@@ -75,15 +78,16 @@ def get_latest_tweet_df(search_term, num_tweets):
         tweet_data.append(
             [tweet.user.username, tweet.date, tweet.likeCount, tweet.content]
         )
-
-    tweet_df = pd.DataFrame(
-        tweet_data, columns=["Username", "Date", "Like Count", "Tweet"]
+    tweet_dataset = pd.DataFrame(
+       tweet_data, columns=["Username", "Date", "Like Count", "Tweet"]
     )
+    tweet_df = tweet_dataset.drop_duplicates(subset=['Tweet'], keep='last')
     return tweet_df
 
 
 # membuat fungsi untuk case folding
 def casefolding(tweet_df):
+   
     tweet_df = tweet_df.lower()                                 # merubah kalimat menjadi huruf kecil
     tweet_df = re.sub(r'https?://\S+|www\.\S+', '', tweet_df)   # menghapus url dari kalimat
     tweet_df = re.sub(r'[-+]?[0-9]+', '', tweet_df)              # menghapus angka dari kalimat
