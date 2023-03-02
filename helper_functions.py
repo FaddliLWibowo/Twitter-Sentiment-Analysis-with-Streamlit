@@ -151,8 +151,8 @@ def text_preprocessing(tweet_df):
     return tweet_df
 
 def predict_sentiment(tweet_df):
-    model = load_model("static/twitter-sentiment-analysis-model-lstm.h5")
-    with open("static/tokenizer.pickle", "rb") as handle:
+    model = load_model("Static/twitter-sentiment-analysis-model-lstm.h5")
+    with open("Static/tokenizer.pickle", "rb") as handle:
         custom_tokenizer = pickle.load(handle)
     temp_df = tweet_df.copy()
     temp_df["Cleaned Tweet"] = temp_df["Tweet"].apply(text_preprocessing)
