@@ -10,5 +10,5 @@ tweepy==4.10.1
 wordcloud==1.8.2.2
 nltk==3.7
 snscrape==0.5.0.20230113
-protobuf==3.12
+protobuf==3.12.2
 PySastrawi==1.2.0
