@@ -3,7 +3,7 @@
 ![twitter](https://cdn.analyticsvidhya.com/wp-content/uploads/2021/06/79592twitter.jpg)
 Forecasting rainfall from past data using Neural Prophet and deploy it using Streamlit.
 
-Link of Web App: https://faddlilwibowo-rainfall-forecasting-with-neural-prop-main-85o9fo.streamlit.app/
+Link of Web App: https://faddlilwibowo-twitter-sentiment-analysis-with-strea-main-qgzwa0.streamlit.app/
 ```
 Twitter-Sentiment-Analysis-with-Streamlit
 ```
