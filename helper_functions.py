@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import datetime
+import string
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pickle
@@ -85,69 +86,62 @@ def get_latest_tweet_df(search_term, num_tweets):
     return tweet_df
 
 
-# membuat fungsi untuk case folding
-def casefolding(tweet_df):
-    pattern = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
-    pattern1 = re.compile(r'pic.twitter.com/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
-    tweet_df = re.sub(pattern,' ',tweet_df) #remove urls if any
-    tweet_df = re.sub(pattern1,' ',tweet_df)
-    #Convert to lower case
-    tweet_df = tweet_df.lower()                                
-     #Convert www.* or https?://*
-    tweet_df = re.sub('((www\.[^\s]+)|(https?://[^\s]+))','',tweet_df) 
-    #Convert @username to AT_USER
-    tweet_df = re.sub('@+','',tweet_df)
-     #Remove additional white spaces
-    tweet_df = re.sub('[\s]+', ' ', tweet_df)
-    #Replace #word with word
-    tweet_df  = re.sub(r'#([^\s]+)', r'\1', tweet_df )
-    #remove symbols
-    tweet_df = re.sub(r'[^.,a-zA-Z0-9 \n\.]',' ',tweet_df)
-    tweet_df = re.sub(r'[-+]?[0-9]+', '', tweet_df)  
-    tweet_df = tweet_df.replace(',',' ').replace('.',' ')          
-    tweet_df = re.sub(r'[^\w\s]', '', tweet_df)    
-    #trim             
-    tweet_df = tweet_df.strip('\'"')
-    return tweet_df
+# Some functions for preprocessing text
+def cleaningText(tweet):
+    tweet = re.sub(r'@[A-Za-z0-9]+', '', tweet) # remove mentions
+    tweet = re.sub(r'#[A-Za-z0-9]+', '', tweet) # remove hashtag
+    tweet = re.sub(r'RT[\s]', '', tweet) # remove RT
+    tweet = re.sub(r"http\S+", '', tweet) # remove link
+    tweet = re.sub(r'[0-9]+', '', tweet) # remove numbers
+    tweet = tweet.replace('\n', ' ') # replace new line into space
+    tweet = tweet.translate(str.maketrans('', '', string.punctuation)) # remove all punctuations
+    tweet = tweet.strip(' ') # remove characters space from both left and right text
+    return tweet
 
-# Normalisasi data dari slang ke kata dalam bahasa indonesia
+def casefoldingText(tweet): # Converting all the characters in a text into lower case
+    tweet = tweet.lower() 
+    return tweet
+
 key_norm = pd.read_csv('https://raw.githubusercontent.com/FaddliLWibowo/Twitter-Sentiment-Analysis-with-Streamlit/main/Dataset/kamus-slang-ind.csv', encoding='ISO-8859-1')
-
-def text_normalize(tweet_df):
-    tweet_df = ' '.join([key_norm[key_norm['singkat'] == word]['hasil'].values[0]
+def text_normalize(tweet):
+    tweet = ' '.join([key_norm[key_norm['singkat'] == word]['hasil'].values[0]
     if (key_norm['singkat'] == word).any()
-    else word for word in tweet_df.split()
+    else word for word in tweet.split()
     ])
-    tweet_df = str.lower(tweet_df)
-    return tweet_df
+    return tweet
 
-# membuat fungsi stopword
-stopwords_ind = stopwords.words('indonesian')
-more_stopword = ['terusmajubersamaprabowo', 'mendingprabowo', 'prabowopresiden', 'prabowopersatuanindonesia', 'prabowosubianto']
-stopwords_ind = stopwords_ind + more_stopword
+def tokenizingText(tweet): # Tokenizing or splitting a string, text into a list of tokens
+    tweet = word_tokenize(tweet) 
+    return tweet
 
-def remove_stop_word(tweet_df):
-    clean_words = []
-    tweet_df = tweet_df.split()
-    for word in tweet_df:
-        if word not in stopwords_ind:
-            clean_words.append(word)
-    return " ".join(clean_words)
+def filteringText(tweet): # Remove stopwors in a text
+    listStopwords = set(stopwords.words('indonesian'))
+    filtered = []
+    for txt in tweet:
+        if txt not in listStopwords:
+            filtered.append(txt)
+    tweet = filtered 
+    return tweet
 
-# membuat fungsi untuk stemming bahasa indonesia
-factory = StemmerFactory()
-stemmer = factory.create_stemmer()
+def stemmingText(tweet): # Reducing a word to its word stem that affixes to suffixes and prefixes or to the roots of words
+    factory = StemmerFactory()
+    stemmer = factory.create_stemmer()
+    tweet = [stemmer.stem(word) for word in tweet]
+    return tweet
 
-def stemming(tweet_df):
-    tweet_df = stemmer.stem(tweet_df)
-    return tweet_df
+def toSentence(list_words): # Convert list of words into sentence
+    sentence = ' '.join(word for word in list_words)
+    return sentence
 
-# membuat fungsi untuk menggabungkan seluruh langkah text preprocessing
 def text_preprocessing(tweet_df):
-    tweet_df = casefolding(tweet_df)
+    # Preprocessing tweets data
+    tweet_df = cleaningText(tweet_df)
+    tweet_df = casefoldingText(tweet_df)
     tweet_df = text_normalize(tweet_df)
-    tweet_df = remove_stop_word(tweet_df)
-    tweet_df = stemming(tweet_df)
+    tweet_df = tokenizingText(tweet_df)
+    tweet_df = filteringText(tweet_df)
+    tweet_df = stemmingText(tweet_df)
+    tweet_df = toSentence(tweet_df)
     return tweet_df
 
 def predict_sentiment(tweet_df):
@@ -156,6 +150,7 @@ def predict_sentiment(tweet_df):
         custom_tokenizer = pickle.load(handle)
     temp_df = tweet_df.copy()
     temp_df["Cleaned Tweet"] = temp_df["Tweet"].apply(text_preprocessing)
+    temp_df = temp_df.drop_duplicates(subset=['Cleaned Tweet'], keep='last')
     temp_df = temp_df[(temp_df["Cleaned Tweet"].notna()) & (temp_df["Cleaned Tweet"] != "")]
     sequences = pad_sequences(
         custom_tokenizer.texts_to_sequences(temp_df["Cleaned Tweet"]), maxlen=82
@@ -166,7 +161,6 @@ def predict_sentiment(tweet_df):
         lambda x: "Positif" if x >= 0.50 else "Negatif"
     )
     return temp_df
-
 
 def plot_sentiment(tweet_df):
     sentiment_count = tweet_df["Sentiment"].value_counts()
@@ -235,7 +229,6 @@ def get_top_n_gram(tweet_df, ngram_range, n=10):
     df = df.sort_values(by="counts", ascending=False).head(n)
     df["words"] = df["words"].str.title()
     return df
-
 
 def plot_n_gram(n_gram_df, title, color="#54A24B"):
     fig = px.bar(
